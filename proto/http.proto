@@ -1,0 +1,16 @@
+syntax = "proto3";
+package http;
+option cc_generic_services = true;
+
+message HttpRequest {
+    int32 version = 1;
+    string content = 2;
+};
+message HttpResponse {
+    int32 version = 1;
+    string content = 2;
+};
+
+service HttpService {
+    rpc HttpTalk(HttpRequest) returns (HttpResponse);
+};
