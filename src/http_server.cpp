@@ -20,7 +20,7 @@ class HttpServiceImpl : public HttpService {
 public:
     HttpServiceImpl() {};
     virtual ~HttpServiceImpl() {};
-    void Echo(google::protobuf::RpcController* cntl_base,
+    void HttpTalk(google::protobuf::RpcController* cntl_base,
             const HttpRequest*,
             HttpResponse*,
             google::protobuf::Closure* done) {
@@ -58,9 +58,9 @@ int main(int argc, char **argv) {
 
     brpc::ServerOptions options;
     options.idle_timeout_sec = FLAGS_idle_timeout_s;
-    options.ssl_options.default_cert.certificate = FLAGS_certificate;
-    options.ssl_options.default_cert.private_key = FLAGS_private_key;
-    options.ssl_options.ciphers = FLAGS_ciphers;
+    //options.ssl_options.default_cert.certificate = FLAGS_certificate;
+    //options.ssl_options.default_cert.private_key = FLAGS_private_key;
+    //options.ssl_options.ciphers = FLAGS_ciphers;
 
     if (server.Start(FLAGS_port, &options) != 0) {
         LOG(ERROR) << "Fail to start HttpServer";
