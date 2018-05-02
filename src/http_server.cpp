@@ -3,7 +3,7 @@
 #include <butil/logging.h>
 #include <brpc/restful.h>
 
-#include "http.pb.h"
+#include "HttpService.h"
 
 DEFINE_int32(port, 8010, "TCP Port of this server");
 DEFINE_int32(idle_timeout_s, -1, "Connection will be closed if there is no "
@@ -14,36 +14,6 @@ DEFINE_int32(logoff_ms, 2000, "Maximum duration of server's LOGOFF state "
 DEFINE_string(certificate, "cert.pem", "Certificate file path to enable SSL");
 DEFINE_string(private_key, "key.pem", "Private key file path to enable SSL");
 DEFINE_string(ciphers, "", "Cipher suite used for SSL connections");
-
-namespace http {
-class HttpServiceImpl : public HttpService {
-public:
-    HttpServiceImpl() {};
-    virtual ~HttpServiceImpl() {};
-    void HttpTalk(google::protobuf::RpcController* cntl_base,
-            const HttpRequest*,
-            HttpResponse*,
-            google::protobuf::Closure* done) {
-        // This object helps you to call done->Run() in RAII style. If you need
-        // to process the request asynchronously, pass done_guard.release().
-        brpc::ClosureGuard done_guard(done);
-
-        brpc::Controller* cntl =
-            static_cast<brpc::Controller*>(cntl_base);
-        // Fill response.
-        cntl->http_response().set_content_type("text/plain");
-        butil::IOBufBuilder os;
-        os << "queries:";
-        for (brpc::URI::QueryIterator it = cntl->http_request().uri().QueryBegin();
-                it != cntl->http_request().uri().QueryEnd(); ++it) {
-            os << ' ' << it->first << '=' << it->second;
-        }
-        os << "\nbody: " << cntl->request_attachment() << '\n';
-        os.move_to(cntl->response_attachment());
-    }
-};
-
-}
 
 int main(int argc, char **argv) {
     GFLAGS_NAMESPACE::ParseCommandLineFlags(&argc, &argv, true);
